@@ -1,0 +1,37 @@
+# Set base image (host OS).
+FROM httpd AS webserver
+
+# For testing atm. Copy the docs to the webserver.
+# COPY ./docs/_build/html /usr/local/apache2/htdocs/docs
+
+FROM debian:buster-slim AS base
+
+# Since Debians Mirrors are pretty slow, update for the fastest ones.
+RUN apt-get update
+
+# Install actually needed software.
+RUN apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-setuptools \
+    build-essential \
+    python3-dev
+
+RUN pip3 install poetry
+
+
+# Set the working directory.
+WORKDIR /code
+
+# Copy dependencies.
+COPY poetry.lock .
+COPY pyproject.toml .
+
+# Install dependencies.
+RUN poetry install
+
+# Copy the content of the local src directory to the working directory inside docker.
+COPY group03_ett/ group03_ett/
+
+# Command to run at container start.
+CMD poetry run python3 group03_ett/main.py

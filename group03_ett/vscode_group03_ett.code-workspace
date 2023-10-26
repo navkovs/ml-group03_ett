@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"autoDocstring.docstringFormat": "sphinx",
+		"autoDocstring.startOnNewLine": true,
+		"python.venvPath": "${workspaceFolder}/.venv"
+	}
+}

@@ -1,0 +1,191 @@
+body {
+    margin: auto;
+    font-size: 1em;
+    color: #ebdbb2;
+    background-color: #282828;
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+h1 {
+    color: #689d6a;
+    font-weight: bold;
+    text-align: center;
+    background-color: #1d2021;
+    padding: 0.3em;
+    margin: 0em;
+    height: 1.4em;
+    width: 100%;
+    position: fixed;
+    top: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:link {
+    color: #458588;
+}
+
+a:visited {
+    color: #98971a;
+}
+
+a:hover {
+    color: #ebdbb2;
+}
+
+a:active {
+    color: #cc241d;
+}
+
+p {
+    padding: 1em;
+}
+
+.div_userInput {
+    border-style: solid;
+    border-width: 0.2em;
+    border-color: #d79921;
+    padding: 0.8em;
+    display: inline-block;
+    margin-top: 6.4em;
+    margin-bottom: 0em;
+    margin-left: 3em;
+    margin-right: 3em;
+    width: 54em;
+}
+
+.div_userInput input,
+select,
+button {
+    color: #ebdbb2;
+    background-color: #282828;
+
+    padding: 0.8em;
+
+    border-color: #928374;
+    border-style: solid;
+    border-width: 0.1em;
+
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: 0.3em;
+    margin-right: 0.3em;
+}
+
+.div_userInput input::placeholder {
+    color: #928374;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    color: #928374;
+    padding: 2em;
+    font-family: monospace;
+}
+
+.footer a {
+    padding-left: 2em;
+    padding-right: 2em;
+    color: #928374;
+}
+
+.footer a:visited {
+    color: #928374;
+}
+
+.footer a:hover {
+    color: #ebdbb2;
+}
+
+.footer a:active {
+    color: #cc241d;
+}
+
+ul.no-bullets {
+    list-style-type: none;
+    padding: 2em;
+    margin: 0;
+}
+
+ul.no-bullets li {
+    list-style-type: none;
+    padding: 0.5em;
+}
+
+.red {
+    color: #cc241d;
+}
+
+.green {
+    color: #98971a;
+}
+
+.yellow {
+    color: #d79921;
+}
+
+.blue {
+    color: #458588;
+}
+
+.purple {
+    color: #b16286;
+}
+
+.aqua {
+    color: #689d6a;
+}
+
+.gray {
+    color: #a56651;
+}
+
+.orange {
+    color: #d65d0e;
+}
+
+.fg {
+    color: #ebdbb2;
+}
+
+/* To make a console error go away. */
+.leaflet-fade-anim .leaflet-tile,
+.leaflet-zoom-anim .leaflet-zoom-animated {
+    will-change: auto !important;
+}
+
+#latitude {
+    width: 6em;
+}
+
+#longitude {
+    width: 6em;
+}
+
+#length {
+    width: 6em;
+}
+
+#breadth {
+    width: 6em;
+}
+
+#calculateETT {
+    font-weight: bold;
+}
+
+#osm {
+    display: inline-block;
+    justify-content: center;
+    width: 75em;
+    height: 50em;
+    margin-left: 3em;
+    margin-right: 3em;
+}

@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Group 03 ETT</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="leaflet/leaflet.css"/>
+	<script src="leaflet/leaflet.js" lazyload></script>
+</head>
+
+<body onload="selectPort()">
+    <h1>Estimated Travel Time</h1>
+
+    <div class="div_userInput">
+        <!-- Input for for the client to fill out -->
+        <form id="form_userInput" action="">
+            <select id="route" name="route" onchange="selectPort()">
+                <option value=0>Rotterdam - Hamburg with Agents</option>
+                <option value=1>Kiel - Gdynia with Agents</option>
+                <option value=2>Rotterdam - Hamburg without Agents</option>
+                <option value=3>Kiel - Gdynia without Agents</option>
+            </select>
+            <input type="number" id="latitude" name="latitude" placeholder="Latitude" required>
+            <input type="number" id="longitude" name="longitude" placeholder="Longitude" required>
+            <input type="number" id="length" name="length" placeholder="Length" required>
+            <input type="number" id="breadth" name="breadth" placeholder="Breadth" required>
+            <input type="button" id="calculateETT" name="ett" value="Calculate ETT" onclick="validateInput()">
+        </form>
+    </div>
+
+    <p id="clientETT">To estimate your ETT, please input your current values above.</p>
+
+    <!-- OSM Integration -->
+    <div id="osm"></div>
+
+    <!-- Footer for documentation purposes -->
+    <div class="footer">
+        <a href="group03.html">group 03</a>
+        <a href="broken.html">git</a>
+        <a href="docs/">documentation</a>
+    </div>
+
+    <script type="text/javascript">
+
+        // Focus Latitude so that one can easily begin typing.
+        document.getElementById("latitude").focus();
+
+        // Set view to default, so in this case Rottderdam - Hamburg.
+        var mymap = L.map('osm').setView([53.3, 6.5], 7);
+
+        // Map icon for Ship.
+        var img_ship = L.icon({
+            iconUrl: 'img/docker_ship.png',
+            iconSize:     [48, 34], // size of the icon
+            iconAnchor:   [18, 34], // point of the icon which will correspond to marker's location
+            popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+
+        // Map icon for starting port. An anchor.
+        // Icon Source: https://thenounproject.com
+        var img_start = L.icon({
+            iconUrl: 'img/anchor.png',
+            iconSize:     [35, 35], // size of the icon
+            iconAnchor:   [17, 35], // point of the icon which will correspond to marker's location
+            popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+
+        // Map icon for end port. A flag.
+        // Icon Source: https://thenounproject.com
+        var img_end = L.icon({
+            iconUrl: 'img/end_flag.png',
+            iconSize:     [40, 40], // size of the icon
+            iconAnchor:   [20, 40], // point of the icon which will correspond to marker's location
+            popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+
+        // Map icon for a historical point. A red dot.
+        // Icon Source: https://thenounproject.com
+        var img_dot = L.icon({
+            iconUrl: 'img/dot_red.jpg',
+            iconSize:     [6, 6], // size of the icon
+            iconAnchor:   [3, 3], // point of the icon which will correspond to marker's location
+            popupAnchor:  [0, -3] // point from which the popup should open relative to the iconAnchor
+        });
+
+        // Get tiles to display.
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mymap);
+
+        // Similar to the php command "include". Makes it possible to include
+        // additional javascript documents as if they were in native code.
+        function include(file)
+        {
+            var script  = document.createElement('script');
+            script.src  = file;
+            script.type = 'text/javascript';
+            script.defer = true;
+
+            document.getElementsByTagName('head').item(0).appendChild(script);
+        }
+
+        // Displays the currently selected route and makes sure that the other
+        // one is disabled.
+        function showRoute(route)
+        {
+            if (typeof routeHamburg !== 'undefined') {
+                mymap.removeLayer(routeHamburg);
+            }
+            if (typeof routeKiel !== 'undefined') {
+                mymap.removeLayer(routeKiel);
+            }
+
+            if (route == 1 || route == 3) {
+                routeKiel = new L.LayerGroup().addTo(mymap);
+                include('kiel_gdynia_coords.js');
+            } else {
+                routeHamburg = new L.LayerGroup().addTo(mymap);
+                include('rotterdam_hamburg_coords.js');
+            }
+        }
+
+        // Function that should trigger when a new Route is selected.
+        // Puts the start and end icons to their respective positions and
+        // zooms onto the route.
+        function selectPort()
+        {
+            if (typeof startPort !== 'undefined') {
+                mymap.removeLayer(startPort);
+            }
+            if (typeof endPort !== 'undefined') {
+                mymap.removeLayer(endPort);
+            }
+
+            // Add Ports to Map. Mean value is used.
+            if (document.getElementById('route').value == 1 || document.getElementById('route').value == 3) {
+                mymap.setView([55, 14.5], 6);
+                // Kiel
+                startPort = L.marker([54.362,10.141], {icon: img_start}).addTo(mymap);
+                // Gdynia
+                endPort = L.marker([54.53,18.55], {icon: img_end}).addTo(mymap);
+                showRoute(1);
+            } else {
+                mymap.setView([53.3, 7], 7);
+                // Rotterdam
+                startPort = L.marker([51.927,4.152], {icon: img_start}).addTo(mymap);
+                // Hamburg
+                endPort = L.marker([53.522,9.918], {icon: img_end}).addTo(mymap);
+                showRoute(0);
+            }
+        }
+
+        // Function to add a marker (Ship) to the map on click of "Calculate ETT"
+        function addToMap(lat, lon)
+        {
+            // Check if ship is already on the map. In this case, remove it
+            // and place a new ship.
+            if (typeof ship !== 'undefined') {
+                mymap.removeLayer(ship);
+            }
+
+            // Add ship to map and center the view on ship.
+            ship = L.marker([lat,lon], {icon: img_ship}).addTo(mymap);
+            mymap.setView([lat, lon], 8);
+        }
+
+        // Takes userinput and converts to float.
+        function validateInput(route)
+        {
+            // Check if input is there.
+            if (document.getElementById('latitude').value == "") {
+                alert('Please set a numerical Value for Latitude.');
+                return;
+            }
+            if (document.getElementById('longitude').value == "") {
+                alert('Please set a numerical Value for Longitude.');
+                return;
+            }
+            if (document.getElementById('length').value == "") {
+                alert('Please set a numerical Value for Length.');
+                return;
+            }
+            if (document.getElementById('breadth').value == "") {
+                alert('Please set a numerical Value for Breadth.');
+                return;
+            }
+
+            // Convert Input to string in float syntax.
+            // E. g. 42.000
+            var lat = (+(document.getElementById('latitude').value)).toFixed(3);
+            var lon = (+(document.getElementById('longitude').value)).toFixed(3);
+            var length = (+(document.getElementById('length').value)).toFixed(3);
+            var breadth = (+(document.getElementById('breadth').value)).toFixed(3);
+            var route = (+(document.getElementById('route').value));
+
+            // Restrict values for each route
+            if (route == 0 || route == 2) {
+                if (lat < 50 || lat > 60) {
+                    alert('Please set a sensible Latitude between 50 and 60.');
+                    return;
+                }
+
+                if (lon < 0 || lon > 10) {
+                    alert('Please set a sensible Longitude between 0 and 10.');
+                    return;
+                }
+            } else {
+                if (lat < 53 || lat > 60) {
+                    alert('Please set a sensible Latitude between 53 and 60.');
+                    return;
+                }
+
+                if (lon < 10 || lon > 20) {
+                    alert('Please set a sensible Longitude between 10 and 20.');
+                    return;
+                }
+            }
+
+            if (length < 0 || length > 500) {
+                alert('Please set a sensible Length between 0 and 500.');
+                return;
+            }
+
+            if (breadth < 0 || breadth > 100) {
+                alert('Please set a sensible Breadth between 0 and 100.');
+                return;
+            }
+
+            addToMap(lat, lon);
+            callFlask(lat, lon, length, breadth, route);
+        }
+
+        // Calls the Flask Server to calculate the ETT.
+        // This is done by calling the flask server which then takes the GET
+        // parameters and uses them to calculate the ETT.
+        function callFlask(lat, lon, length, breadth, route)
+        {
+            fetch(`http://localhost:8081/getdata/${lat}/${lon}/${length}/${breadth}/${route}`).then(function (response) {
+                return response.text();
+            }).then(function (text) {
+                console.log('GET response text:');
+                console.log(text);
+
+                // Set ETT
+                setETT(text);
+            });
+        }
+
+        function setETT(ett)
+        {
+            // Remove first part of response so that only the number gets shown.
+            ett = ett.slice(5).split('.')[0];
+
+            // Overwrite the HTML Text with answer.
+            document.getElementById('clientETT').innerHTML = `Your current ETT is ${ett} min.`;
+        }
+    </script>
+</body>
+</html>

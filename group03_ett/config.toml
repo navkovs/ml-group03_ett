@@ -1,0 +1,15 @@
+concurrent = 1
+
+[[runners]]
+    name = "docker_runner"
+    url = ""
+    token = "8NPqzgY7XkbCeoTbrKXK"
+    executor = "docker"
+    [runners.docker]
+        image = "docker:latest"
+        privileged = true
+        disable_cache = false
+        cache_dir = "cache"
+        volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
+    [runners.cache]
+        Insecure = false
